@@ -7,13 +7,14 @@ from models.amenity import Amenity
 class test_Amenity(test_basemodel):
     """ """
 
-    def __init__(self, *args, **kwargs):
+    def init(self, *args, **kwargs):
         """ """
-        super().__init__(*args, **kwargs)
+        super().init(*args, **kwargs)
         self.name = "Amenity"
         self.value = Amenity
 
     def test_name2(self):
         """ """
         new = self.value()
+        new.name = "name"
         self.assertEqual(type(new.name), str)

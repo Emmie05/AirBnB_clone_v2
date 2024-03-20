@@ -7,9 +7,9 @@ from models.place import Place
 class test_Place(test_basemodel):
     """ """
 
-    def __init__(self, *args, **kwargs):
+    def init(self, *args, **kwargs):
         """ """
-        super().__init__(*args, **kwargs)
+        super().init(*args, **kwargs)
         self.name = "Place"
         self.value = Place
 
