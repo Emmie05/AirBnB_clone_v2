@@ -1,35 +1,33 @@
 #!/usr/bin/python3
 """
-Fabric script to delete out-of-date archives.
+Deletes out-of-date archives
+fab -f 100-clean_web_static.py do_clean:number=2
+    -i ssh-key -u ubuntu > /dev/null 2>&1
 """
+
 import os
-from fabric.api import env, local, run, cd, lcd
+from fabric.api import *
 
 env.hosts = ["3.83.253.154", "34.229.66.227"]
 
+
 def do_clean(number=0):
     """Delete out-of-date archives.
-
     Args:
         number (int): The number of archives to keep.
-
     If number is 0 or 1, keeps only the most recent archive. If
     number is 2, keeps the most and second-most recent archives,
     etc.
     """
-    number = int(number)
-    if number <= 1:
-        number = 1
+    number = 1 if int(number) == 0 else int(number)
 
+    archives = sorted(os.listdir("versions"))
+    [archives.pop() for i in range(number)]
     with lcd("versions"):
-        archives = sorted(os.listdir("versions"), reverse=True)
-        if len(archives) > number:
-            for archive in archives[number:]:
-                local("rm ./{}".format(archive))
+        [local("rm ./{}".format(a)) for a in archives]
 
     with cd("/data/web_static/releases"):
         archives = run("ls -tr").split()
         archives = [a for a in archives if "web_static_" in a]
-        if len(archives) > number:
-            for archive in archives[number:]:
-                run("rm -rf ./{}".format(archive))
+        [archives.pop() for i in range(number)]
+        [run("rm -rf ./{}".format(a)) for a in archives]
